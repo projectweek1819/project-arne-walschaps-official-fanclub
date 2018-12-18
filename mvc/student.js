@@ -527,7 +527,7 @@ function whack() {
         removeZeroSizedMoles,
         createMole
     };
-    const controller = {onTimerTick};
+  /*  const controller = {onTimerTick};
     const view = {};
     return {model, controller, view};
-}
+}*/
