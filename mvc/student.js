@@ -348,9 +348,6 @@ function random() {
         if (args.key === " ") {
             return model.throwDie(state);
         }
-        else {
-            return state;
-        }
     }
 
     function render(state) {
