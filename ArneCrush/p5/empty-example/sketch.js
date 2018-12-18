@@ -1,28 +1,37 @@
 var grid;
 var size;
-var differentColors;
+var pictures;
+
+var amountOfJewels;
 
 
 
 function setup() {
   // put setup code here
   size = 600;
-  differentColors = [color(200,20,20), color(20,200,20), color(20,20,200), color(200,150,0), color(0,150,110), color(255,10,240)]
+  pictures = new Array(3);
+  pictures[0] = [color(200,20,20), color(20,200,20), color(20,20,200), color(200,150,0), color(0,150,110), color(255,10,240)]
   createCanvas(size, size);
-  let rijen = 8;
-  let kolommen = 8;
-  grid = [];
-  for (let rows = 0; rows < rijen; rows++) {
-  	  grid.push(new Array(kolommen));
-  }
-  fillGrid();
-  
+  setupGame();
 }
+
 
 function draw() {
   // put drawing code here
   background(100);
   showGrid();
+}
+
+function setupGame() {
+	amountOfJewels = 6;
+
+	let rijen = 8;
+	let kolommen = 8;
+	grid = [];
+	for (let rows = 0; rows < rijen; rows++) {
+	  	grid.push(new Array(kolommen));
+	}
+	fillGrid();
 }
 
 function showGrid() {
@@ -53,7 +62,11 @@ class Jewel {
 	constructor(rij, kolom) {
 		this.rij = rij;
 		this.kolom = kolom;
-		this.kleur = differentColors[Math.floor(Math.random()*differentColors.length)];
+		this.soort = Math.floor(Math.random()*amountOfJewels);
+		this.level = 0;
+
+		this.kleur = pictures[this.level][this.soort];
+
 
 	}
 
