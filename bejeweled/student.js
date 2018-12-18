@@ -5,7 +5,6 @@ function width(grid) {
 
 function height(grid) {
     return grid.length;
-<<<<<<< HEAD
 }
 
 function isInside(grid, position) {
@@ -87,6 +86,4 @@ function removeChains(grid) {
         grid[y][x] = '';
     }
     return result;
-=======
->>>>>>> 6f32f578a575f1d1bf3f1136cf0abadb5e14abd5
 }
