@@ -27,7 +27,6 @@ function horizontalChainAt(grid, position) {
     while (grid[position.y][position.x] === grid[position.y][xMax]) {
         xMax++;
     }
-
     return xMax-xMin-1;
 }
 

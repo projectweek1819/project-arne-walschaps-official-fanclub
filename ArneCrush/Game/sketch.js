@@ -11,13 +11,13 @@ var cols;
 function setup() {
   size = 600;
   pictures = new Array(3);
-  pictures[0] = [color(200,20,20), color(20,200,20), color(20,20,200), color(200,150,0), color(0,150,110), color(255,10,240)]
+  pictures[0] = [color(200,20,20), color(20,200,20), color(20,20,200), color(200,150,0), color(0,150,110), color(10,10,20)]
   createCanvas(size, size);
   setupGame();
 }
 
 function draw() {
-  background(100);
+  background(255,15,180);
   showGrid(grid);
   showClicked(clickedGrid);
 }
@@ -46,7 +46,7 @@ function setupGame() {
 function showGrid(matrix) {
 	for (let r = 0; r < matrix.length; r++) {
 		for (let c = 0; c < matrix[r].length; c++) {
-			matrix[r][c].show(size, matrix.length);
+			matrix[r][c].show(size, matrix.length, r, c);
 		}
 	}
 }
@@ -170,6 +170,13 @@ function horizontalChainAt(r, c, kind, matrix) {
 	return cMax-cMin-1;
 }
 
+function checkThisPlay(matrix, r1, c1, r2, c2) {
+	let newMatrix = swap(matrix, r1, c1, r2, c2)
+	let check1 = checkGridAtPosition(newMatrix, r1, c1);
+	let check2 = checkGridAtPosition(newMatrix, r2, c2);
+	return check1[0] >= 3 || check1[1] >= 3 || check2[0] >= 3 || check2[1] >= 3;
+}
+
 function giveTranspose(matrix) {
 	// Geeft de getransponeerde matrix terug
 	let newMatrix = []
@@ -183,22 +190,61 @@ function giveTranspose(matrix) {
 	return newMatrix;
 }
 
-class Jewel {
-	constructor(rij, kolom) {
-		this.rij = rij;
-		this.kolom = kolom;
-		this.soort = Math.floor(Math.random()*amountOfJewels);
-		this.level = 0;
+function checkNeighboursSelected(matrix, r, c) {
+	// Geeft positie terug van buur die op true staat, anders [-1, -1]
 
-		this.kleur = pictures[this.level][this.soort];
+	// Check links
+	if (c > 0 && matrix[r][c-1]) {
+		return [r, c-1];
+	}
+	// Check rechts
+	else if (c < matrix[0].length-1 && matrix[r][c+1]) {
+		return [r, c+1];
+	}
+	// Check boven
+	else if (r > 0 && matrix[r-1][c]) {
+		return [r-1, c];
+	}
+	// Check onder
+	else if (r < matrix.length-1 && matrix[r+1][c]) {
+		return [r+1, c];
+	}
+	else {
+		return [-1, -1];
+	}
+}
+
+function fillMatrixWith(matrix, x) {
+	for (let row = 0; row < matrix.length; row++) {
+		for (let col = 0; col < matrix[0].length; col++) {
+			matrix[row][col] = x;
+		}
+	}
+	return matrix;
+}
+
+function thisRowAndColumnWasClicked(r, c) {
+	let neighbour = checkNeighboursSelected(clickedGrid, r, c);
+
+	if (neighbour[0] === -1) {
+		let thisWas = clickedGrid[r][c];
+		fillMatrixWith(clickedGrid, false);
+		clickedGrid[r][c] = !thisWas;
+	}
+	else {
+		if (!checkThisPlay(grid, r, c, neighbour[0], neighbour[1])) {
+			fillMatrixWith(clickedGrid, false);
+		}
+		else {
+			console.log("van hier");
+			console.log(grid);
+			grid = swap(grid, r, c, neighbour[0], neighbour[1]);
+			console.log(grid);
+		}
 	}
 
-	show(size, amount) {
-		let jewelSize = size / amount;
-		fill(this.kleur);
-		noStroke();
-		ellipse(this.kolom*jewelSize+jewelSize/2, this.rij*jewelSize+jewelSize/2, jewelSize, jewelSize);
-	}
+
+
 }
 
 function mousePressed() {
@@ -206,8 +252,22 @@ function mousePressed() {
 		let rMouse = Math.floor(mouseY / (size/cols));
 		let cMouse = Math.floor(mouseX / (size/rows));
 
-		clickedGrid[rMouse][cMouse] = !clickedGrid[rMouse][cMouse];
+		thisRowAndColumnWasClicked(rMouse, cMouse);
+	}
+}
 
-		let amountClicked = 0;
+class Jewel {
+	constructor(rij, kolom) {
+		this.soort = Math.floor(Math.random()*amountOfJewels);
+		this.level = 0;
+
+		this.kleur = pictures[this.level][this.soort];
+	}
+
+	show(size, amount, rij, kolom) {
+		let jewelSize = size / amount;
+		fill(this.kleur);
+		noStroke();
+		ellipse(kolom*jewelSize+jewelSize/2, rij*jewelSize+jewelSize/2, 0.85*jewelSize, 0.85*jewelSize);
 	}
 }
