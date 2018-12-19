@@ -75,7 +75,7 @@ function fillGrid() {
 	while (geenGeldigGridGevonden) {
 		for (let r = 0; r < matrix.length; r++) {
 			for (let c = 0; c < matrix[r].length; c++) {
-				matrix[r][c] = new Jewel(r,c);
+				matrix[r][c] = new Jewel(false);
 			}
 		}
 
@@ -223,7 +223,50 @@ function fillMatrixWith(matrix, x) {
 	return matrix;
 }
 
+function returnHorizontalCombos(matrix, r, c, kind) {
+	let cMin = c;
+	while (cMin >= 0 && kind === matrix[r][cMin].soort) {
+	    cMin--;
+	}
+	let cMax = c;
+	while (cMax < matrix.length && kind === matrix[r][cMax].soort) {
+	    cMax++;
+	}
+	return [cMin+1, cMax-1];
+}
+
+function searchForCombosAtPosition(matrix, r, c) {
+	// Geeft een array met alle posities die deel uitmaken van een combo
+	let hor = returnHorizontalCombos(matrix, r, c, matrix[r][c].soort);
+	let ver = returnHorizontalCombos(giveTranspose(matrix), c, r, matrix[r][c].soort);
+	let returnList = [];
+	if (hor[1]-hor[0]+1 >= 3) {
+		for (let i = hor[0]; i <= hor[1]; i++) {
+			returnList.push([r,i]);
+		}
+	}
+	if (ver[1]-ver[0]+1 >= 3) {
+		for (let i = ver[0]; i <= ver[1]; i++) {
+			returnList.push([i, c]);
+		}
+	}
+	return returnList;
+}
+
+function searchAndDeleteCombos(matrix, r1, c1, r2, c2) {
+	let positions1 = searchForCombosAtPosition(matrix, r1, c1);
+	let positions2 = searchForCombosAtPosition(matrix, r2, c2);
+
+	for (let i = 0; i < positions1.length; i++) {
+		grid[positions1[i][0]][positions1[i][1]] = new Jewel(true);
+	}
+	for (let i = 0; i < positions2.length; i++) {
+		grid[positions2[i][0]][positions2[i][1]] = new Jewel(true);
+	}
+}
+
 function thisRowAndColumnWasClicked(r, c) {
+	// Alle functionaliteit voor het aanklikken van een Jewel
 	let neighbour = checkNeighboursSelected(clickedGrid, r, c);
 
 	if (neighbour[0] === -1) {
@@ -236,15 +279,12 @@ function thisRowAndColumnWasClicked(r, c) {
 			fillMatrixWith(clickedGrid, false);
 		}
 		else {
-			console.log("van hier");
-			console.log(grid);
+			// Er zijn 2 juwelen aangeduid en deze kunnen gewisseld worden.
 			grid = swap(grid, r, c, neighbour[0], neighbour[1]);
-			console.log(grid);
+			searchAndDeleteCombos(grid, r, c, neighbour[0], neighbour[1])
+			fillMatrixWith(clickedGrid, false);
 		}
 	}
-
-
-
 }
 
 function mousePressed() {
@@ -257,17 +297,26 @@ function mousePressed() {
 }
 
 class Jewel {
-	constructor(rij, kolom) {
-		this.soort = Math.floor(Math.random()*amountOfJewels);
-		this.level = 0;
+	constructor(geen) {
+		if (!geen) {
+			this.soort = Math.floor(Math.random()*amountOfJewels);
+			this.level = 0;
 
-		this.kleur = pictures[this.level][this.soort];
+			this.kleur = pictures[this.level][this.soort];
+		}
+		else {
+			this.soort = -1;
+		}
+
 	}
 
 	show(size, amount, rij, kolom) {
-		let jewelSize = size / amount;
-		fill(this.kleur);
-		noStroke();
-		ellipse(kolom*jewelSize+jewelSize/2, rij*jewelSize+jewelSize/2, 0.85*jewelSize, 0.85*jewelSize);
+		if (this.soort !== -1) {
+			let jewelSize = size / amount;
+			fill(this.kleur);
+			noStroke();
+			ellipse(kolom*jewelSize+jewelSize/2, rij*jewelSize+jewelSize/2, 0.85*jewelSize, 0.85*jewelSize);
+		}
+
 	}
 }
