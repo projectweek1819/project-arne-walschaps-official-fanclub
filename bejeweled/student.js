@@ -87,3 +87,19 @@ function removeChains(grid) {
     }
     return result;
 }
+
+function collapse(grid) {
+    for (let x = 0; x < width(grid); x++) {
+        for (let y = 0; y < height(grid); y++) {
+            if (grid[y][x] === ""){
+                let ty = y;
+                while (ty > 0){
+                    grid[ty][x] = grid[ty-1][x];
+                    ty--;
+                }
+                grid[0][x] = "";
+            }
+        }
+    }
+}
+
