@@ -201,13 +201,32 @@ class Jewel {
 	}
 }
 
+function checkNeighboursSelected(matrix, r, c) {
+	// Geeft positie terug van buur die op true staat, anders [-1, -1]
+
+	// Check links
+	if (c > 0 && matrix[r][c-1]) {
+		return [r, c-1];
+	}
+	// Check rechts
+	else if (c < matrix[0].length-1 && matrix[r][c+1]) {
+		return [r, c+1];
+	}
+	// Check boven
+	else if (r > 0 && matrix[r-1][c]) {
+		return [r-1, c];
+	}
+	// Check onder
+	else if (r < matrix.length-1 && matrix[r+1][c]) {
+		return [r+1, c];
+	}
+}
+
 function mousePressed() {
 	if (mouseX <= size && mouseY <= size) {
 		let rMouse = Math.floor(mouseY / (size/cols));
 		let cMouse = Math.floor(mouseX / (size/rows));
 
 		clickedGrid[rMouse][cMouse] = !clickedGrid[rMouse][cMouse];
-
-		let amountClicked = 0;
 	}
 }
