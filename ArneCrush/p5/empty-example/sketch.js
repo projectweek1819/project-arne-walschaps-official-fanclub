@@ -1,15 +1,12 @@
 var grid;
+var clickedGrid
 var size;
 var pictures;
 
 var amountOfJewels;
 
-var jewelClicked = [null, null];
-
 var rows;
 var cols;
-
-
 
 function setup() {
   size = 600;
@@ -22,6 +19,7 @@ function setup() {
 function draw() {
   background(100);
   showGrid(grid);
+  showClicked(clickedGrid);
 }
 
 function setupGame() {
@@ -30,16 +28,42 @@ function setupGame() {
 	rows  = 8;
 	cols = 8;
 	grid = [];
+	clickedGrid = [];
 	for (let r = 0; r < rows; r++) {
-	  	grid.push(new Array(cols));
+	  	let newRow = [];
+	  	let newClickedRow = [];
+	  	for (let c = 0; c < cols; c++) {
+	  		newRow.push(null);
+	  		newClickedRow.push(false);
+	  	}
+	  	grid.push(newRow);
+	  	clickedGrid.push(newClickedRow);
 	}
 	fillGrid();
+
 }
 
 function showGrid(matrix) {
 	for (let r = 0; r < matrix.length; r++) {
 		for (let c = 0; c < matrix[r].length; c++) {
 			matrix[r][c].show(size, matrix.length);
+		}
+	}
+}
+
+function showClicked(matrix) {
+	let jewelSize = size / rows;
+	for (let r = 0; r < matrix.length; r++) {
+
+		for (let c = 0; c < matrix[r].length; c++) {
+
+			if (matrix[r][c]) {
+				noFill();
+				strokeWeight(2);
+				stroke(grid[r][c].kleur);
+				rect(c*jewelSize+1, r*jewelSize+1, jewelSize-2, jewelSize-2);
+
+			}
 		}
 	}
 }
@@ -54,8 +78,6 @@ function fillGrid() {
 				matrix[r][c] = new Jewel(r,c);
 			}
 		}
-
-
 
 		check = [!checkWholeGrid(matrix), checkForPossiblePlays(matrix)];
 		if (check[0] && check[1]) {
@@ -184,6 +206,8 @@ function mousePressed() {
 		let rMouse = Math.floor(mouseY / (size/cols));
 		let cMouse = Math.floor(mouseX / (size/rows));
 
-		console.log(rMouse, cMouse);
+		clickedGrid[rMouse][cMouse] = !clickedGrid[rMouse][cMouse];
+
+		let amountClicked = 0;
 	}
 }
