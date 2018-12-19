@@ -265,6 +265,23 @@ function searchAndDeleteCombos(matrix, r1, c1, r2, c2) {
 	}
 }
 
+function replenishGrid() {
+	for (let r = 0; r < grid.length; r++) {
+		for (c = 0; c < grid[0].length; c++) {
+			if (grid[r][c].soort === -1) {
+				for (r2 = r; r2 >= 0; r2--) {
+					if (r2 === 0) {
+						grid[r2][c] = new Jewel(false);
+					}
+					else {
+						grid[r2][c] = grid[r2-1][c];
+					}
+				}
+			}
+		}
+	}
+}
+
 function thisRowAndColumnWasClicked(r, c) {
 	// Alle functionaliteit voor het aanklikken van een Jewel
 	let neighbour = checkNeighboursSelected(clickedGrid, r, c);
@@ -281,7 +298,8 @@ function thisRowAndColumnWasClicked(r, c) {
 		else {
 			// Er zijn 2 juwelen aangeduid en deze kunnen gewisseld worden.
 			grid = swap(grid, r, c, neighbour[0], neighbour[1]);
-			searchAndDeleteCombos(grid, r, c, neighbour[0], neighbour[1])
+			searchAndDeleteCombos(grid, r, c, neighbour[0], neighbour[1]);
+			replenishGrid();
 			fillMatrixWith(clickedGrid, false);
 		}
 	}
