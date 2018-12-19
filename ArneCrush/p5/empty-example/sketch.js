@@ -4,6 +4,11 @@ var pictures;
 
 var amountOfJewels;
 
+var jewelClicked = [null, null];
+
+var rows;
+var cols;
+
 
 
 function setup() {
@@ -14,7 +19,6 @@ function setup() {
   setupGame();
 }
 
-
 function draw() {
   background(100);
   showGrid(grid);
@@ -23,11 +27,11 @@ function draw() {
 function setupGame() {
 	amountOfJewels = 6;
 
-	let rijen = 8;
-	let kolommen = 8;
+	rows  = 8;
+	cols = 8;
 	grid = [];
-	for (let rows = 0; rows < rijen; rows++) {
-	  	grid.push(new Array(kolommen));
+	for (let r = 0; r < rows; r++) {
+	  	grid.push(new Array(cols));
 	}
 	fillGrid();
 }
@@ -50,7 +54,13 @@ function fillGrid() {
 				matrix[r][c] = new Jewel(r,c);
 			}
 		}
-		geenGeldigGridGevonden = checkWholeGrid(matrix);
+
+
+
+		check = [!checkWholeGrid(matrix), checkForPossiblePlays(matrix)];
+		if (check[0] && check[1]) {
+			geenGeldigGridGevonden = false;
+		}
 	}
 	grid = matrix;	
 }
@@ -64,9 +74,30 @@ function swap(matrix, r1, c1, r2, c2) {
 	return copy;
 }
 
-function chechForPossiblePlays() {
+function checkForPossiblePlays(matrix) {
 	// Geeft terug of er een swap is die een combo geeft
-	
+	function checkForPossiblePlaysHorizontalSwap(matrix) {
+		// Geeft terug of er in de horizontale richting een swap is die een combo geeft
+		for (let row = 0; row < matrix.length; row++) {
+			for (let col = 0; col < matrix[0].length-1; col++) {
+				newMatrix = swap(matrix, row, col, row, col+1);
+				if (checkGridAtPosition(newMatrix, row, col)[0] >= 3 || checkGridAtPosition(newMatrix, row, col)[1] >= 3) {
+					return true;
+				}
+				if (checkGridAtPosition(newMatrix, row, col+1)[0] >= 3 || checkGridAtPosition(newMatrix, row, col+1)[1] >= 3) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	if (checkForPossiblePlaysHorizontalSwap(matrix) || checkForPossiblePlaysHorizontalSwap(giveTranspose(matrix))) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 function makeCopy(matrix) {
@@ -107,7 +138,6 @@ function checkGridAtPosition(matrix, r, c) {
 function horizontalChainAt(r, c, kind, matrix) {
 	// Geeft de lengte van zelfde_soort_rij op pos (r;c) terug
 	let cMin = c;
-	console.log(matrix);
 	while (cMin >= 0 && kind === matrix[r][cMin].soort) {
 	    cMin--;
 	}
@@ -131,8 +161,6 @@ function giveTranspose(matrix) {
 	return newMatrix;
 }
 
-
-
 class Jewel {
 	constructor(rij, kolom) {
 		this.rij = rij;
@@ -141,8 +169,6 @@ class Jewel {
 		this.level = 0;
 
 		this.kleur = pictures[this.level][this.soort];
-
-
 	}
 
 	show(size, amount) {
@@ -151,5 +177,13 @@ class Jewel {
 		noStroke();
 		ellipse(this.kolom*jewelSize+jewelSize/2, this.rij*jewelSize+jewelSize/2, jewelSize, jewelSize);
 	}
+}
 
+function mousePressed() {
+	if (mouseX <= size && mouseY <= size) {
+		let rMouse = Math.floor(mouseY / (size/cols));
+		let cMouse = Math.floor(mouseX / (size/rows));
+
+		console.log(rMouse, cMouse);
+	}
 }
