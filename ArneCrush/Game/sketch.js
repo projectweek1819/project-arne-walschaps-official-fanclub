@@ -2,7 +2,7 @@ var grid;
 var clickedGrid
 var size;
 var pictures;
-var points = 0;
+var points = 1000;
 
 var amountOfJewels;
 var images;
@@ -20,15 +20,19 @@ function draw() {
     background(250, 250, 250);
     showGrid(grid);
     showClicked(clickedGrid);
+    if (!checkForPossiblePlays(grid)) {
+        document.getElementById("gameOver").innerHTML = "Doe jullie laptops maar toe, je bent dood";
+
+    }
 }
 
 function setupGame() {
     createCanvas(size, size);
 
-    amountOfJewels = 6;
+    amountOfJewels = 7;
 
-    rows = 8;
-    cols = 8;
+    rows = 10;
+    cols = 10;
     grid = [];
     clickedGrid = [];
     for (let r = 0; r < rows; r++) {

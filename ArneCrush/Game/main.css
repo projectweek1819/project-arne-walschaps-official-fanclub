@@ -1,14 +1,22 @@
 body {
     display: flex;
+    background-color: orange;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 body > div {
     order: 1;
 }
 
-body div > p {
+body #points {
     font-size: 5rem;
     padding: 1rem
+}
+
+#gameOver {
+    font-size: 3rem;
+    padding: 1rem;
 }
 
 img {
