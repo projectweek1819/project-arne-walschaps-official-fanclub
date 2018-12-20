@@ -340,7 +340,6 @@ class Jewel {
 			this.soort = Math.floor(Math.random()*amountOfJewels);
 			this.level = 0;
 			this.v = 0;
-			this.k = 100;
 			this.m = 1;
 			this.g = 9.81;
 
@@ -358,7 +357,7 @@ class Jewel {
 	fall(rij) {
 		let newHeight = rij * this.jewelSize;
 
-		if ((newHeight - this.height)**2 > 1 || this.v**2 > 1 ) {
+		if ((newHeight - this.height)**2 > 0 || this.v**2 > 0 ) {
 			for (let i = 0; i < 10; i++) {
 				let gravity = this.m*this.g;
 				let w = 0;
@@ -372,7 +371,7 @@ class Jewel {
 				if (this.height >= newHeight) {
 					let b = 0.1;
 					if (this.v - b > 0) {
-						let c = 0.5
+						let c = 0.5;
 						this.height -= this.v;
 						this.v -= b;
 						this.v = -c*this.v;
