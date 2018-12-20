@@ -374,7 +374,7 @@ class Jewel {
 				if (this.height >= newHeight) {
 					let b = 0.1;
 					if (this.v - b > 0) {
-						let c = 0.5
+						let c = 0.5;
 						this.height -= this.v;
 						this.v -= b;
 						this.v = -c*this.v;
