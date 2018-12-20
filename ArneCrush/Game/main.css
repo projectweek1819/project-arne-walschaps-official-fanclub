@@ -1,0 +1,17 @@
+body {
+    display: flex;
+}
+
+body > div {
+    order: 1;
+}
+
+body div > p {
+    font-size: 5rem;
+    padding: 1rem
+}
+
+img {
+    display: block;
+    max-height: 180px;
+}

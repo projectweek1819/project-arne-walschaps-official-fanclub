@@ -2,6 +2,7 @@ var grid;
 var clickedGrid
 var size;
 var pictures;
+var points = 0;
 
 var amountOfJewels;
 
@@ -283,6 +284,7 @@ function replenishGrid() {
 	for (let r = 0; r < grid.length; r++) {
 		for (c = 0; c < grid[0].length; c++) {
 			if (grid[r][c].soort === -1) {
+			    points += 100;
 				thereWhereEmptySpaces = true;
 				for (r2 = r; r2 >= 0; r2--) {
 					if (r2 === 0) {
@@ -298,6 +300,7 @@ function replenishGrid() {
 	if (thereWhereEmptySpaces) {
         searchAndDeleteCombos(grid);
 		replenishGrid();
+        document.getElementById("points").innerHTML = points;
     }
 }
 
