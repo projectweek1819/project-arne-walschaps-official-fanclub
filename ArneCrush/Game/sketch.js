@@ -5,11 +5,13 @@ var pictures;
 var points = 1000;
 var themes;
 var theme;
+var themesounds;
 
 var amountOfJewels;
 var rows;
 var cols;
 var test;
+var song;
 
 function setup() {
     size = 700;
@@ -23,7 +25,6 @@ function draw() {
     showClicked(clickedGrid);
     if (!checkForPossiblePlays(grid)) {
         document.getElementById("gameOver").innerHTML = "Doe jullie laptops maar toe, je bent dood";
-
     }
 }
 
@@ -32,9 +33,9 @@ function changeTheme() {
         theme = 1;
     }
     else {
-        theme = 0
+        theme = 0;
     }
-    ;
+
 }
 
 function setupGame() {
@@ -58,19 +59,31 @@ function setupGame() {
         grid.push(newRow);
         clickedGrid.push(newClickedRow);
     }
+
     function load(name) {
-        return loadImage("../Game/img/"+name+".png");
+        return loadImage("../Game/img/" + name + ".png");
     }
 
     let images = [];
     let kerst = [];
 
     for (let i = 0; i < 8; i++) {
-        images.push(load("n"+i));
-        kerst.push(load("kerst"+i));
+        images.push(load("n" + i));
+        kerst.push(load("kerst" + i));
     }
     themes.push(images);
     themes.push(kerst);
+
+    themesounds = [];
+
+    let normalSounds = [];
+    let kerstSounds = [];
+    for (let i = 0; i < 3; i++) {
+        normalSounds.push(loadSound("../Game/sounds/normal" + i + ".mp3"));
+        kerstSounds.push(loadSound("../Game/sounds/kerst" + i + ".mp3"));
+    }
+    themesounds.push(normalSounds);
+    themesounds.push(kerstSounds);
 
     fillGrid();
 
@@ -345,6 +358,7 @@ function thisRowAndColumnWasClicked(r, c) {
             fillMatrixWith(clickedGrid, false);
         }
         else {
+            playRandomSound();
             // Er zijn 2 juwelen aangeduid en deze kunnen gewisseld worden.
             grid = swap(grid, r, c, neighbour[0], neighbour[1]);
             let jewels = [[r, c], [neighbour[0], neighbour[1]]];
@@ -353,6 +367,19 @@ function thisRowAndColumnWasClicked(r, c) {
             fillMatrixWith(clickedGrid, false);
         }
     }
+}
+
+function playRandomSound() {
+    for (let i = 0; i < themesounds.length; i++) {
+        for (let j = 0; j < themesounds[i].length; j++) {
+            if (themesounds[i][j].isPlaying()) { // .isPlaying() returns a boolean
+                themesounds[i][j].stop();
+            }
+        }
+    }
+    let n = Math.floor(Math.random() * themesounds[theme].length);
+
+    themesounds[theme][n].play();
 }
 
 function mousePressed() {
