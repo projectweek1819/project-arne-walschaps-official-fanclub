@@ -2,7 +2,7 @@ var grid;
 var clickedGrid
 var size;
 var pictures;
-var points = 1000;
+var points = 0;
 
 var amountOfJewels;
 var images;
@@ -17,7 +17,7 @@ function setup() {
 }
 
 function draw() {
-    background(250, 250, 250);
+    background(77,111,154);
     showGrid(grid);
     showClicked(clickedGrid);
     if (!checkForPossiblePlays(grid)) {
@@ -31,8 +31,8 @@ function setupGame() {
 
     amountOfJewels = 7;
 
-    rows = 10;
-    cols = 10;
+    rows = 8;
+    cols = 8;
     grid = [];
     clickedGrid = [];
     for (let r = 0; r < rows; r++) {
@@ -73,7 +73,7 @@ function showClicked(matrix) {
             if (matrix[r][c]) {
                 noFill();
                 strokeWeight(2);
-                stroke(color(20, 20, 20));
+                stroke(color(56,80,112));
                 rect(c * jewelSize + 1, r * jewelSize + 1, jewelSize - 2, jewelSize - 2);
 
             }

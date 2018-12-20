@@ -1,25 +1,30 @@
 body {
     display: flex;
-    background-color: orange;
-    justify-content: flex-end;
-    align-items: center;
+    background-color: rgb(70,100,140);
+    justify-content: flex-start;
+    align-items: start;
 }
 
 body > div {
     order: 1;
+    width: 100%;
 }
 
 body #points {
-    font-size: 5rem;
-    padding: 1rem
+    color: white;
+    font-size: 10rem;
+    padding: 0 0 0 1rem;
+    margin: 0;
 }
 
 #gameOver {
+    color: white;
     font-size: 3rem;
-    padding: 1rem;
+    padding-left: 1rem;
 }
 
 img {
     display: block;
     max-height: 180px;
+    float: right;
 }
