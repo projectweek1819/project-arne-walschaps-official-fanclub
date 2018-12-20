@@ -29,13 +29,10 @@ function draw() {
 }
 
 function changeTheme() {
-    if (theme === 0) {
-        theme = 1;
-    }
-    else {
+    theme ++;
+    if (theme >= 3) {
         theme = 0;
     }
-
 }
 
 function setupGame() {
@@ -66,24 +63,29 @@ function setupGame() {
 
     let images = [];
     let kerst = [];
+    let paas = [];
 
     for (let i = 0; i < 8; i++) {
         images.push(load("n" + i));
         kerst.push(load("kerst" + i));
+        paas.push(load("Paas"+i));
     }
     themes.push(images);
     themes.push(kerst);
-
+    themes.push(paas);
     themesounds = [];
 
     let normalSounds = [];
     let kerstSounds = [];
+
     for (let i = 0; i < 3; i++) {
         normalSounds.push(loadSound("../Game/sounds/normal" + i + ".mp3"));
         kerstSounds.push(loadSound("../Game/sounds/kerst" + i + ".mp3"));
+
     }
     themesounds.push(normalSounds);
     themesounds.push(kerstSounds);
+    themesounds.push(normalSounds);
 
     fillGrid();
 
