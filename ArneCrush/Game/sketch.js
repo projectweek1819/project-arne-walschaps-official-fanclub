@@ -2,6 +2,7 @@ var grid;
 var clickedGrid
 var size;
 var pictures;
+var points = 0;
 
 var amountOfJewels;
 
@@ -283,6 +284,7 @@ function replenishGrid() {
 	for (let r = 0; r < grid.length; r++) {
 		for (c = 0; c < grid[0].length; c++) {
 			if (grid[r][c].soort === -1) {
+			    points += 100;
 				thereWhereEmptySpaces = true;
 				for (r2 = r; r2 >= 0; r2--) {
 					if (r2 === 0) {
@@ -298,6 +300,7 @@ function replenishGrid() {
 	if (thereWhereEmptySpaces) {
         searchAndDeleteCombos(grid);
 		replenishGrid();
+        document.getElementById("points").innerHTML = points;
     }
 }
 
@@ -340,7 +343,6 @@ class Jewel {
 			this.soort = Math.floor(Math.random()*amountOfJewels);
 			this.level = 0;
 			this.v = 0;
-			this.k = 100;
 			this.m = 1;
 			this.g = 9.81;
 
@@ -358,7 +360,7 @@ class Jewel {
 	fall(rij) {
 		let newHeight = rij * this.jewelSize;
 
-		if ((newHeight - this.height)**2 > 1 || this.v**2 > 1 ) {
+		if ((newHeight - this.height)**2 > 0 || this.v**2 > 0 ) {
 			for (let i = 0; i < 10; i++) {
 				let gravity = this.m*this.g;
 				let w = 0;
