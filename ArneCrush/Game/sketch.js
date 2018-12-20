@@ -8,6 +8,7 @@ var amountOfJewels;
 var images;
 var rows;
 var cols;
+var test;
 
 function setup() {
     size = 600;
