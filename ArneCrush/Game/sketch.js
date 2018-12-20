@@ -46,7 +46,7 @@ function setupGame() {
 function showGrid(matrix) {
 	for (let r = 0; r < matrix.length; r++) {
 		for (let c = 0; c < matrix[r].length; c++) {
-			matrix[r][c].show(size, matrix.length, r, c);
+			matrix[r][c].show(size, r, c);
 		}
 	}
 }
@@ -75,7 +75,7 @@ function fillGrid() {
 	while (geenGeldigGridGevonden) {
 		for (let r = 0; r < matrix.length; r++) {
 			for (let c = 0; c < matrix[r].length; c++) {
-				matrix[r][c] = new Jewel(false);
+				matrix[r][c] = new Jewel(false, r);
 			}
 		}
 
@@ -84,7 +84,7 @@ function fillGrid() {
 			geenGeldigGridGevonden = false;
 		}
 	}
-	grid = matrix;	
+	grid = matrix;
 }
 
 function swap(matrix, r1, c1, r2, c2) {
@@ -253,25 +253,40 @@ function searchForCombosAtPosition(matrix, r, c) {
 	return returnList;
 }
 
-function searchAndDeleteCombos(matrix, r1, c1, r2, c2) {
-	let positions1 = searchForCombosAtPosition(matrix, r1, c1);
-	let positions2 = searchForCombosAtPosition(matrix, r2, c2);
-
-	for (let i = 0; i < positions1.length; i++) {
-		grid[positions1[i][0]][positions1[i][1]] = new Jewel(true);
+function searchAndDeleteCombos(matrix) {
+	let jewels = [];
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			jewels.push([i,j]);
+		}
 	}
-	for (let i = 0; i < positions2.length; i++) {
-		grid[positions2[i][0]][positions2[i][1]] = new Jewel(true);
-	}
+	for (let j = 0; j < jewels.length; j++) {
+        let positions = searchForCombosAtPosition(matrix, jewels[j][0], jewels[j][1]);
+        for (let i = 0; i < positions.length; i++) {
+            grid[positions[i][0]][positions[i][1]] = new Jewel(true, 0);
+        }
+    }
 }
 
+function contains(array, value) {
+	for (let i = 0; i < array; i++) {
+		if (array[i] === value) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 function replenishGrid() {
+	let thereWhereEmptySpaces = false;
 	for (let r = 0; r < grid.length; r++) {
 		for (c = 0; c < grid[0].length; c++) {
 			if (grid[r][c].soort === -1) {
+				thereWhereEmptySpaces = true;
 				for (r2 = r; r2 >= 0; r2--) {
 					if (r2 === 0) {
-						grid[r2][c] = new Jewel(false);
+						grid[r2][c] = new Jewel(false, -1);
 					}
 					else {
 						grid[r2][c] = grid[r2-1][c];
@@ -280,6 +295,10 @@ function replenishGrid() {
 			}
 		}
 	}
+	if (thereWhereEmptySpaces) {
+        searchAndDeleteCombos(grid);
+		replenishGrid();
+    }
 }
 
 function thisRowAndColumnWasClicked(r, c) {
@@ -298,7 +317,8 @@ function thisRowAndColumnWasClicked(r, c) {
 		else {
 			// Er zijn 2 juwelen aangeduid en deze kunnen gewisseld worden.
 			grid = swap(grid, r, c, neighbour[0], neighbour[1]);
-			searchAndDeleteCombos(grid, r, c, neighbour[0], neighbour[1]);
+			let jewels = [[r, c], [neighbour[0], neighbour[1]]];
+			searchAndDeleteCombos(grid);
 			replenishGrid();
 			fillMatrixWith(clickedGrid, false);
 		}
@@ -315,12 +335,19 @@ function mousePressed() {
 }
 
 class Jewel {
-	constructor(geen) {
+	constructor(geen, row) {
 		if (!geen) {
 			this.soort = Math.floor(Math.random()*amountOfJewels);
 			this.level = 0;
+			this.v = 0;
+			this.k = 100;
+			this.m = 1;
+			this.g = 9.81;
 
 			this.kleur = pictures[this.level][this.soort];
+			this.jewelSize = size / cols;
+
+			this.height = row*this.jewelSize;
 		}
 		else {
 			this.soort = -1;
@@ -328,12 +355,47 @@ class Jewel {
 
 	}
 
-	show(size, amount, rij, kolom) {
+	fall(rij) {
+		let newHeight = rij * this.jewelSize;
+
+		if ((newHeight - this.height)**2 > 1 || this.v**2 > 1 ) {
+			for (let i = 0; i < 10; i++) {
+				let gravity = this.m*this.g;
+				let w = 0;
+				if (this.v !== 0) {
+					w = -(this.v**2 /100)*this.v**2/this.v;
+				}
+				let F = gravity + w;
+				let a = F/this.m/1000;
+				this.v += a;
+				this.height += this.v;
+				if (this.height >= newHeight) {
+					let b = 0.1;
+					if (this.v - b > 0) {
+						let c = 0.5
+						this.height -= this.v;
+						this.v -= b;
+						this.v = -c*this.v;
+					}
+					else {
+						this.v = 0;
+						this.height = newHeight;
+					}
+				}
+			}
+		}
+
+	}
+
+	show(size, rij, kolom) {
 		if (this.soort !== -1) {
-			let jewelSize = size / amount;
+			this.fall(rij);
+			let x = kolom*this.jewelSize+this.jewelSize/2;
+			let y = this.height + this.jewelSize/2;
+
 			fill(this.kleur);
 			noStroke();
-			ellipse(kolom*jewelSize+jewelSize/2, rij*jewelSize+jewelSize/2, 0.85*jewelSize, 0.85*jewelSize);
+			ellipse(x, y, 0.85*this.jewelSize, 0.85*this.jewelSize);
 		}
 
 	}
