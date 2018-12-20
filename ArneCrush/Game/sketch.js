@@ -16,12 +16,14 @@ function setup() {
 }
 
 function draw() {
-    background(255, 15, 180);
+    background(250, 250, 250);
     showGrid(grid);
     showClicked(clickedGrid);
 }
 
 function setupGame() {
+    createCanvas(size, size);
+
     amountOfJewels = 6;
 
     rows = 8;
@@ -42,11 +44,8 @@ function setupGame() {
     pictures = new Array(3);
     pictures[0] = [color(200, 20, 20), color(20, 200, 20), color(20, 20, 200), color(200, 150, 0), color(0, 150, 110), color(10, 10, 20)];
     images = new Array(3);
-    images[0] = [];
-    for (let i = 1; i <= amountOfJewels; i++) {
-        images[0].push(loadImage("../Game/img/j ("+i+").png"));
-    }
-    createCanvas(size, size);
+    images[0] = [loadImage("../Game/img/j (" + 2 + ").png"), loadImage("../Game/img/j (" + 4 + ").png"), loadImage("../Game/img/j (" + 6 + ").png"), loadImage("../Game/img/j (" + 8 + ").png"), loadImage("../Game/img/j (" + 10 + ").png"), loadImage("../Game/img/j (" + 14 + ").png"),loadImage("../Game/img/j (" + 16 + ").png")];
+
 
     fillGrid();
 
@@ -69,7 +68,7 @@ function showClicked(matrix) {
             if (matrix[r][c]) {
                 noFill();
                 strokeWeight(2);
-                stroke(grid[r][c].kleur);
+                stroke(color(20, 20, 20));
                 rect(c * jewelSize + 1, r * jewelSize + 1, jewelSize - 2, jewelSize - 2);
 
             }
@@ -123,12 +122,7 @@ function checkForPossiblePlays(matrix) {
         return false;
     }
 
-    if (checkForPossiblePlaysHorizontalSwap(matrix) || checkForPossiblePlaysHorizontalSwap(giveTranspose(matrix))) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return checkForPossiblePlaysHorizontalSwap(matrix) || checkForPossiblePlaysHorizontalSwap(giveTranspose(matrix));
 }
 
 function makeCopy(matrix) {
@@ -354,7 +348,7 @@ class Jewel {
             this.m = 1;
             this.g = 9.81;
 
-            this.kleur = pictures[this.level][this.soort];
+            this.img = images[this.level][this.soort];
             this.jewelSize = size / cols;
 
             this.height = row * this.jewelSize;
@@ -400,13 +394,11 @@ class Jewel {
     show(size, rij, kolom) {
         if (this.soort !== -1) {
             this.fall(rij);
-            let x = kolom * this.jewelSize + this.jewelSize / 2;
-            let y = this.height + this.jewelSize / 2;
+            let percentage = 0.8
+            let x = kolom * this.jewelSize + (1-percentage)/2*this.jewelSize;
+            let y = this.height +(1-percentage)/2*this.jewelSize;
 
-            fill(this.kleur);
-            noStroke();
-            ellipse(x, y, 0.85 * this.jewelSize, 0.85 * this.jewelSize)
-            image(images[0][this.level][this.soort], x - this.jewelSize/2, y - this.jewelSize/2, this.jewelSize, this.jewelSize);
+            image(this.img, x, y, percentage*this.jewelSize, percentage*this.jewelSize);
         }
 
     }
