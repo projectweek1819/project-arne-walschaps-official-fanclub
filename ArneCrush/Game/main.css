@@ -28,3 +28,12 @@ img {
     max-height: 180px;
     float: right;
 }
+
+button {
+    font-size: 3rem;
+    border: none;
+    color: white;
+    background-color: rgb(77,111,154);
+    padding: 1rem;
+    margin: 1rem;
+}

@@ -1,23 +1,24 @@
 var grid;
-var clickedGrid
+var clickedGrid;
 var size;
 var pictures;
-var points = 0;
+var points = 1000;
+var themes;
+var theme;
 
 var amountOfJewels;
-var images;
 var rows;
 var cols;
 var test;
 
 function setup() {
-    size = 600;
+    size = 700;
 
     setupGame();
 }
 
 function draw() {
-    background(77,111,154);
+    background(77, 111, 154);
     showGrid(grid);
     showClicked(clickedGrid);
     if (!checkForPossiblePlays(grid)) {
@@ -26,13 +27,25 @@ function draw() {
     }
 }
 
+function changeTheme() {
+    if (theme === 0) {
+        theme = 1;
+    }
+    else {
+        theme = 0
+    }
+    ;
+}
+
 function setupGame() {
     createCanvas(size, size);
 
-    amountOfJewels = 7;
+    amountOfJewels = 8;
+    themes = [];
+    theme = 0;
 
-    rows = 8;
-    cols = 8;
+    rows = 9;
+    cols = 9;
     grid = [];
     clickedGrid = [];
     for (let r = 0; r < rows; r++) {
@@ -45,12 +58,19 @@ function setupGame() {
         grid.push(newRow);
         clickedGrid.push(newClickedRow);
     }
+    function load(name) {
+        return loadImage("../Game/img/"+name+".png");
+    }
 
-    pictures = new Array(3);
-    pictures[0] = [color(200, 20, 20), color(20, 200, 20), color(20, 20, 200), color(200, 150, 0), color(0, 150, 110), color(10, 10, 20)];
-    images = new Array(3);
-    images[0] = [loadImage("../Game/img/j (" + 2 + ").png"), loadImage("../Game/img/j (" + 4 + ").png"), loadImage("../Game/img/j (" + 6 + ").png"), loadImage("../Game/img/j (" + 8 + ").png"), loadImage("../Game/img/j (" + 10 + ").png"), loadImage("../Game/img/j (" + 14 + ").png"),loadImage("../Game/img/j (" + 16 + ").png")];
+    let images = [];
+    let kerst = [];
 
+    for (let i = 0; i < 8; i++) {
+        images.push(load("n"+i));
+        kerst.push(load("kerst"+i));
+    }
+    themes.push(images);
+    themes.push(kerst);
 
     fillGrid();
 
@@ -59,7 +79,7 @@ function setupGame() {
 function showGrid(matrix) {
     for (let r = 0; r < matrix.length; r++) {
         for (let c = 0; c < matrix[r].length; c++) {
-            matrix[r][c].show(size, r, c);
+            matrix[r][c].show(size, r, c, theme);
         }
     }
 }
@@ -73,7 +93,7 @@ function showClicked(matrix) {
             if (matrix[r][c]) {
                 noFill();
                 strokeWeight(2);
-                stroke(color(56,80,112));
+                stroke(color(56, 80, 112));
                 rect(c * jewelSize + 1, r * jewelSize + 1, jewelSize - 2, jewelSize - 2);
 
             }
@@ -348,12 +368,10 @@ class Jewel {
     constructor(geen, row) {
         if (!geen) {
             this.soort = Math.floor(Math.random() * amountOfJewels);
-            this.level = 0;
             this.v = 0;
             this.m = 1;
             this.g = 9.81;
 
-            this.img = images[this.level][this.soort];
             this.jewelSize = size / cols;
 
             this.height = row * this.jewelSize;
@@ -393,17 +411,18 @@ class Jewel {
                 }
             }
         }
-
     }
 
-    show(size, rij, kolom) {
+    show(size, rij, kolom, thema) {
         if (this.soort !== -1) {
             this.fall(rij);
             let percentage = 0.8
-            let x = kolom * this.jewelSize + (1-percentage)/2*this.jewelSize;
-            let y = this.height +(1-percentage)/2*this.jewelSize;
+            let x = kolom * this.jewelSize + (1 - percentage) / 2 * this.jewelSize;
+            let y = this.height + (1 - percentage) / 2 * this.jewelSize;
 
-            image(this.img, x, y, percentage*this.jewelSize, percentage*this.jewelSize);
+
+            let img = themes[thema][this.soort];
+            image(img, x, y, percentage * this.jewelSize, percentage * this.jewelSize);
         }
 
     }
