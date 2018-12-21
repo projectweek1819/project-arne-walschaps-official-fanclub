@@ -29,8 +29,8 @@ function setup() {
     slider.oninput = function () {
         deltaE = this.value / 100;
     };
-    pageBackgrounds = [[70, 100, 140],[70, 100, 140], [150, 20, 20], [100, 46, 0]];
-    gameBackgrounds = [[77, 111, 154],[77, 111, 154], [255, 255, 255], [0, 150, 0]];
+    pageBackgrounds = [[70, 100, 140], [70, 100, 140], [150, 20, 20], [100, 46, 0], [0, 150, 0],[255, 48, 196]];
+    gameBackgrounds = [[77, 111, 154], [77, 111, 154], [255, 255, 255], [0, 150, 0], [255, 130, 0],[235, 235, 0]];
 
     body = document.getElementById("body");
     veranderThemaKnop = document.getElementById("knop");
@@ -55,8 +55,8 @@ function changeTheme() {
     if (theme >= themes.length) {
         theme = 0;
     }
-    body.style.backgroundColor = 'rgb('+pageBackgrounds[theme][0]+','+pageBackgrounds[theme][1]+','+pageBackgrounds[theme][2]+')';
-    veranderThemaKnop.style.backgroundColor = 'rgb('+pageBackgrounds[theme][0]+','+pageBackgrounds[theme][1]+','+pageBackgrounds[theme][2]+')';
+    body.style.backgroundColor = 'rgb(' + pageBackgrounds[theme][0] + ',' + pageBackgrounds[theme][1] + ',' + pageBackgrounds[theme][2] + ')';
+    veranderThemaKnop.style.backgroundColor = 'rgb(' + pageBackgrounds[theme][0] + ',' + pageBackgrounds[theme][1] + ',' + pageBackgrounds[theme][2] + ')';
 }
 
 function setupGame() {
@@ -89,19 +89,26 @@ function setupGame() {
     let arne = [];
     let kerst = [];
     let paas = [];
+    let fruit = [];
+    let emoji = [];
 
     for (let i = 0; i < 8; i++) {
         images.push(load("gem" + i));
         arne.push(load("n" + i));
         kerst.push(load("kerst" + i));
         paas.push(load("Paas" + i + " 150x150"));
+        fruit.push(load("fruit" + i));
+        emoji.push(load("emoji" + i));
     }
     themes.push(images);
     themes.push(arne);
     themes.push(kerst);
     themes.push(paas);
-    themesounds = [];
+    themes.push(fruit);
+    themes.push(emoji);
 
+
+    themesounds = [];
     let normalSounds = [];
     let kerstSounds = [];
 
@@ -114,6 +121,10 @@ function setupGame() {
     themesounds.push(normalSounds);
     themesounds.push(kerstSounds);
     themesounds.push(normalSounds);
+    themesounds.push(normalSounds);
+    themesounds.push(normalSounds);
+
+
 
     fillGrid();
 
