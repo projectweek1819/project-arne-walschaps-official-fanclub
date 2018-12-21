@@ -13,14 +13,36 @@ var cols;
 var test;
 var song;
 
+var slider;
+var deltaE;
+
+var pageBackgrounds;
+var gameBackgrounds;
+
+var body;
+var veranderThemaKnop;
+
 function setup() {
     size = 700;
+    slider = document.getElementById("deltaE");
+    deltaE = slider.value / 100;
+    slider.oninput = function () {
+        deltaE = this.value / 100;
+    };
+    pageBackgrounds = [[70, 100, 140],[70, 100, 140], [150, 20, 20], [100, 46, 0]];
+    gameBackgrounds = [[77, 111, 154],[77, 111, 154], [255, 255, 255], [0, 150, 0]];
+
+    body = document.getElementById("body");
+    veranderThemaKnop = document.getElementById("knop");
+
 
     setupGame();
 }
 
 function draw() {
-    background(77, 111, 154);
+    background(gameBackgrounds[theme][0], gameBackgrounds[theme][1], gameBackgrounds[theme][2]);
+
+
     showGrid(grid);
     showClicked(clickedGrid);
     if (!checkForPossiblePlays(grid)) {
@@ -29,10 +51,12 @@ function draw() {
 }
 
 function changeTheme() {
-    theme ++;
-    if (theme >= 3) {
+    theme++;
+    if (theme >= themes.length) {
         theme = 0;
     }
+    body.style.backgroundColor = 'rgb('+pageBackgrounds[theme][0]+','+pageBackgrounds[theme][1]+','+pageBackgrounds[theme][2]+')';
+    veranderThemaKnop.style.backgroundColor = 'rgb('+pageBackgrounds[theme][0]+','+pageBackgrounds[theme][1]+','+pageBackgrounds[theme][2]+')';
 }
 
 function setupGame() {
@@ -62,15 +86,18 @@ function setupGame() {
     }
 
     let images = [];
+    let arne = [];
     let kerst = [];
     let paas = [];
 
     for (let i = 0; i < 8; i++) {
-        images.push(load("n" + i));
+        images.push(load("gem" + i));
+        arne.push(load("n" + i));
         kerst.push(load("kerst" + i));
-        paas.push(load("Paas"+i));
+        paas.push(load("Paas" + i + " 150x150"));
     }
     themes.push(images);
+    themes.push(arne);
     themes.push(kerst);
     themes.push(paas);
     themesounds = [];
@@ -83,6 +110,7 @@ function setupGame() {
         kerstSounds.push(loadSound("../Game/sounds/kerst" + i + ".mp3"));
 
     }
+    themesounds.push(normalSounds);
     themesounds.push(normalSounds);
     themesounds.push(kerstSounds);
     themesounds.push(normalSounds);
@@ -123,7 +151,7 @@ function fillGrid() {
     while (geenGeldigGridGevonden) {
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
-                matrix[r][c] = new Jewel(false, r);
+                matrix[r][c] = new Jewel(false, r, 1);
             }
         }
 
@@ -306,7 +334,7 @@ function searchAndDeleteCombos(matrix) {
     for (let j = 0; j < jewels.length; j++) {
         let positions = searchForCombosAtPosition(matrix, jewels[j][0], jewels[j][1]);
         for (let i = 0; i < positions.length; i++) {
-            grid[positions[i][0]][positions[i][1]] = new Jewel(true, 0);
+            grid[positions[i][0]][positions[i][1]] = new Jewel(true, 0, grid[positions[i][0]][positions[i][1]].soort);
         }
     }
 }
@@ -325,12 +353,12 @@ function replenishGrid() {
     let thereWhereEmptySpaces = false;
     for (let r = 0; r < grid.length; r++) {
         for (c = 0; c < grid[0].length; c++) {
-            if (grid[r][c].soort === -1) {
+            if (!grid[r][c].real) {
                 points += 100;
                 thereWhereEmptySpaces = true;
                 for (r2 = r; r2 >= 0; r2--) {
                     if (r2 === 0) {
-                        grid[r2][c] = new Jewel(false, -1);
+                        grid[r2][c] = new Jewel(false, -1, 1);
                     }
                     else {
                         grid[r2][c] = grid[r2 - 1][c];
@@ -394,7 +422,7 @@ function mousePressed() {
 }
 
 class Jewel {
-    constructor(geen, row) {
+    constructor(geen, row, verplichteSoort) {
         if (!geen) {
             this.soort = Math.floor(Math.random() * amountOfJewels);
             this.v = 0;
@@ -404,9 +432,11 @@ class Jewel {
             this.jewelSize = size / cols;
 
             this.height = row * this.jewelSize;
+            this.real = !geen;
         }
         else {
-            this.soort = -1;
+            this.soort = verplichteSoort;
+            this.real = !geen;
         }
 
     }
@@ -428,7 +458,7 @@ class Jewel {
                 if (this.height >= newHeight) {
                     let b = 0.1;
                     if (this.v - b > 0) {
-                        let c = 0.5;
+                        let c = deltaE;
                         this.height -= this.v;
                         this.v -= b;
                         this.v = -c * this.v;
